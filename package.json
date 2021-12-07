@@ -1,0 +1,23 @@
+{
+  "name": "uasr-tester",
+  "version": "1.0.0",
+  "description": "Little tool to test URLs for navigator.useragent usage",
+  "main": "server.js",
+  "type": "module",
+  "author": "Sven May",
+  "license": "MIT",
+  "scripts": {
+    "start": "PORT=3000 node server.js"
+  },
+  "dependencies": {
+    "fastify": "^3.24.1",
+    "fastify-formbody": "^5.2.0",
+    "fastify-static": "^4.5.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "puppeteer": "^12.0.1"
+  },
+  "engines": {
+    "node": "17.x"
+  }
+}

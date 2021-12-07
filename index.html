@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕵️‍♀️</text></svg>">
+<title>User Agent String Reduction test</title>
+<meta http-equiv=origin-trial content="">
+
+<style>
+	#results {
+		display:none;
+		width: 80vw;
+		margin-top: 50px;
+	}
+
+	#noresults {
+		display:none;
+		width: 80vw;
+		color: green;
+	}
+
+	#teststarted {
+		display: none;
+		color: blue;
+	}
+
+    body {
+        width: 80vw;
+        margin: 0 auto;
+        font-family: 'Google Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 2rem;
+    }
+
+    h1 {
+        display: inline-block;
+        width: 100%;
+        border-bottom: solid 1px #ccc;
+        font-weight: normal;
+        padding-bottom: 1rem;
+    }
+
+    pre {
+        overflow: scroll;
+        background-color: #eee;
+        border-radius: 4px;
+        padding: 1rem;
+    }
+
+    img {
+        width: 80vw;
+        margin: 0 auto;
+        border: solid 1px #ccc;
+    }
+
+    @media screen and (max-width: 900px) {
+        body {
+            width: 97%;
+            margin: 0.4rem;
+            padding: 0;
+        }
+    }
+</style>
+</head>
+<body>
+	<h1>Test your site for usage of Navigator.useragent</h1>
+	<input class="" autocomplete="off" id="url" name="name" type="text" placeholder="Enter your domain" aria-label="Enter your domain">
+	<button id="submit_url" onclick="startTest();" >Submit</button>
+	<div id="teststarted">The test has started....</div>
+	<div id="results"></div>
+	<div id="noresults">No usage of Navigator.useragent found on this URL.</div>
+</body>
+
+<script>
+	function startTest() {
+		// <table id="issues" width=100%><tr><th width=10%>No.</th><th width=30%>url</th><th width=60%>location</th></tr></table>
+		document.getElementById('teststarted').style.display = "block";
+		document.getElementById('results').style.display = "none";
+		document.getElementById('results').innerHTML = "";
+
+		let tbl = document.createElement('table');
+		tbl.style.width = '100%';
+		tbl.id = "issues";
+		let header = tbl.insertRow(0);
+		let cell1 = header.insertCell(0);
+		let cell2 = header.insertCell(1);
+		let cell3 = header.insertCell(2);
+
+		cell1.innerHTML = "No.";
+		cell2.innerHTML = "URL";
+		cell3.innerHTML = "Location";
+
+		document.getElementById('results').appendChild(tbl);
+		testurl();
+	}
+
+	function testurl() {
+		let value = document.getElementById("url").value;
+		console.log(value);
+		const params = {
+			url: value,
+		};
+		const options = {
+			method: 'POST',
+			body: JSON.stringify( params),
+		};
+		fetch('./test', options)
+			.then(response => response.json())
+			.then(response => {
+				document.getElementById('teststarted').style.display = "none";
+				let pos = 0;
+				let table = document.getElementById('issues');
+				for (let issue of response) {
+					let newrow = table.insertRow(++pos);
+					let cell1 = newrow.insertCell(0);
+					let cell2 = newrow.insertCell(1);
+					let cell3 = newrow.insertCell(2);
+
+					cell1.innerHTML = pos;
+					cell2.innerHTML = issue.issue.details.navigatorUserAgentIssueDetails.url;
+					const location = issue.issue.details.navigatorUserAgentIssueDetails.location;
+					cell3.innerHTML = "Script-url: " + location.url + "<br>" +
+						"line number: " + location.lineNumber + "<br>" +
+						"column number: " + location.columnNumber;
+					console.log(issue.issue.details);
+				}
+				document.getElementById('results').style.display = 'block';
+			});
+	}
+</script>
+</html>
